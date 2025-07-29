@@ -8,6 +8,16 @@ import AppError from "../../errorHelpers/AppError";
 const credentialsLogin = catchAsync(async (req: Request, res: Response) => {
   const loginInfo = await authServices.credentialsLogin(req.body);
 
+  res.cookie("accessToken", loginInfo.accessToken, {
+    httpOnly: true,
+    secure: false,
+  });
+
+  res.cookie("refreshToken", loginInfo.refreshToken, {
+    httpOnly: true,
+    secure: false,
+  });
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -17,7 +27,7 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
-  const refreshToken = req.headers.authorization;
+  const refreshToken = req.cookies.refreshToken;
 
   if (!refreshToken) {
     throw new AppError(httpStatus.BAD_REQUEST, "Refresh Token is required");
