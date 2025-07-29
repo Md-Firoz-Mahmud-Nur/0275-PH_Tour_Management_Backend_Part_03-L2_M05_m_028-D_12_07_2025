@@ -3,10 +3,10 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { authServices } from "./auth.service";
-
+import AppError from "../../errorHelpers/AppError";
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response) => {
-const loginInfo = await authServices.credentialsLogin(req.body);
+  const loginInfo = await authServices.credentialsLogin(req.body);
 
   sendResponse(res, {
     success: true,
@@ -16,6 +16,26 @@ const loginInfo = await authServices.credentialsLogin(req.body);
   });
 });
 
+const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
+  const refreshToken = req.headers.authorization;
+
+  if (!refreshToken) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Refresh Token is required");
+  }
+
+  const tokenInfo = await authServices.getNewAccessToken(
+    refreshToken as string
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Get New Access Token Successfully",
+    data: tokenInfo,
+  });
+});
+
 export const authControllers = {
   credentialsLogin,
+  getNewAccessToken,
 };
