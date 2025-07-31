@@ -69,7 +69,37 @@ const getNewAccessToken = async (refreshToken: string) => {
   };
 };
 
+const resetPassword = async (
+  decodedToken: JwtPayload,
+  password: string,
+  updatePassword: string
+) => {
+  const user = await User.findById(decodedToken.userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, "User does not exist");
+  }
+
+  const isPasswordMatched = await bcrypt.compare(
+    password,
+    user.password as string
+  );
+
+  if (!isPasswordMatched) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Incorrect Password");
+  }
+
+  user.password = await bcrypt.hash(
+    updatePassword as string,
+    Number(envVariables.BCRYPT_SALT_ROUND)
+  );
+
+  await user.save();
+
+};
+
 export const authServices = {
   credentialsLogin,
   getNewAccessToken,
+  resetPassword,
 };
