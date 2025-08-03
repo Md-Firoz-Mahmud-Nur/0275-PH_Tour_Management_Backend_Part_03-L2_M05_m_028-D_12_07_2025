@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import expressSession from "express-session";
 import { envVariables } from "./app/config/env";
+import "./app/config/passport";
 
 
 

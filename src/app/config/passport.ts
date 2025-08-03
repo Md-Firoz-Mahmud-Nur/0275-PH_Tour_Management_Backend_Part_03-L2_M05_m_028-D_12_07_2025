@@ -60,3 +60,17 @@ passport.use(
 // Bridge == Google -> user db store -> token
 //Custom -> email , password, role : USER, name... -> registration -> DB -> 1 User create
 //Google -> req -> google -> successful : Jwt Token : Role , email -> DB - Store -> token - api access
+
+passport.serializeUser((user: any, done: (err: any, id?: unknown) => void) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id: string, done: any) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    console.log(error);
+    done(error);
+  }
+});
