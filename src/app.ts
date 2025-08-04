@@ -9,8 +9,6 @@ import expressSession from "express-session";
 import { envVariables } from "./app/config/env";
 import "./app/config/passport";
 
-
-
 const app = express();
 
 app.use(
