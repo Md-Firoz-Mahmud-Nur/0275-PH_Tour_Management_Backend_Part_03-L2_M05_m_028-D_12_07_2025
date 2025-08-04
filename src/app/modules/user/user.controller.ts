@@ -6,6 +6,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { verifyToken } from "../../utils/jwt";
 import { envVariables } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.createUser(req.body);
@@ -54,7 +55,7 @@ const updateUser = catchAsync(
     //   envVariables.JWT_ACCESS_SECRET
     // ) as JwtPayload;
 
-    const verifiedToken = req.user;
+    const verifiedToken = req.user as JwtPayload;
 
     const payload = req.body;
     const user = await userService.updateUser(userId, payload, verifiedToken);
